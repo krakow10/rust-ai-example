@@ -3,8 +3,11 @@ name = "simple-ai"
 version = "0.1.0"
 edition = "2024"
 
+[features]
+default = []
+
 [dependencies]
-burn = { version = "0.20", features = ["ndarray", "autodiff"] }
+burn = { version = "0.20", features = ["ndarray", "autodiff"], optional = true }
 
 # "from_scratch" is the hand-rolled version (no dependencies).
 # "with_burn" is the same network using the Burn framework.
@@ -15,3 +18,4 @@ path = "src/main.rs"
 [[bin]]
 name = "with_burn"
 path = "src/with_burn.rs"
+required-features = ["burn"]
