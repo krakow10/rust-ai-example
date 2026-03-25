@@ -4,3 +4,14 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+burn = { version = "0.20", features = ["ndarray", "autodiff"] }
+
+# "from_scratch" is the hand-rolled version (no dependencies).
+# "with_burn" is the same network using the Burn framework.
+[[bin]]
+name = "from_scratch"
+path = "src/main.rs"
+
+[[bin]]
+name = "with_burn"
+path = "src/with_burn.rs"
