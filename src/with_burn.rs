@@ -66,7 +66,6 @@ struct XorNet<B: Backend> {
     linear1: Linear<B>,
     // linear2: R⁴ → R¹  (4 hidden neurons, 1 output)
     linear2: Linear<B>,
-    linear3: Linear<B>,
     // Sigmoid activation (stateless — no parameters)
     activation: Relu,
     sigmoid: Sigmoid,
@@ -93,8 +92,7 @@ impl XorNetConfig {
             // Weights are initialized with Glorot uniform by default (same as our
             // hand-rolled Xavier init in main.rs).
             linear1: LinearConfig::new(2, self.hidden_size).init(device),
-            linear2: LinearConfig::new(self.hidden_size, self.hidden_size).init(device),
-            linear3: LinearConfig::new(self.hidden_size, 1).init(device),
+            linear2: LinearConfig::new(self.hidden_size, 1).init(device),
             activation: Relu::new(),
             sigmoid: Sigmoid::new(),
         }
@@ -125,8 +123,6 @@ impl<B: Backend> XorNet<B> {
         let x = self.linear1.forward(x);   // Affine: [batch, 2] → [batch, 4]
         let x = self.activation.forward(x);    // Elementwise σ
         let x = self.linear2.forward(x);    // Affine: [batch, 4] → [batch, 1]
-        let x = self.activation.forward(x);
-        let x = self.linear3.forward(x);
         self.sigmoid.forward(x)        // Final σ → outputs in (0, 1)
     }
 }
