@@ -25,7 +25,7 @@
 use burn::prelude::*;                          // Tensor, Backend, Module, Config
 use burn::backend::{Autodiff, Cuda};        // CPU backend + automatic differentiation
 use burn::module::AutodiffModule;              // Provides .valid() for inference mode
-use burn::nn::{Linear, LinearConfig, Sigmoid}; // Layer types
+use burn::nn::{Linear, LinearConfig, Relu}; // Layer types
 use burn::nn::loss::{MseLoss, Reduction};      // Loss function
 use burn::optim::{Optimizer, SgdConfig, GradientsParams}; // Optimizer trait + SGD config
 
@@ -67,7 +67,7 @@ struct XorNet<B: Backend> {
     // linear2: R⁴ → R¹  (4 hidden neurons, 1 output)
     linear2: Linear<B>,
     // Sigmoid activation (stateless — no parameters)
-    sigmoid: Sigmoid,
+    activation: Relu,
 }
 
 // In Burn, model construction uses the Config pattern.
@@ -92,7 +92,7 @@ impl XorNetConfig {
             // hand-rolled Xavier init in main.rs).
             linear1: LinearConfig::new(2, self.hidden_size).init(device),
             linear2: LinearConfig::new(self.hidden_size, 1).init(device),
-            sigmoid: Sigmoid::new(),
+            activation: Relu::new(),
         }
     }
 }
@@ -119,9 +119,9 @@ impl<B: Backend> XorNet<B> {
         // Shape here: [batch_size, 2] → [batch_size, 4] → [batch_size, 1]
 
         let x = self.linear1.forward(x);   // Affine: [batch, 2] → [batch, 4]
-        let x = self.sigmoid.forward(x);    // Elementwise σ
+        let x = self.activation.forward(x);    // Elementwise σ
         let x = self.linear2.forward(x);    // Affine: [batch, 4] → [batch, 1]
-        self.sigmoid.forward(x)             // Final σ → outputs in (0, 1)
+        self.activation.forward(x)             // Final σ → outputs in (0, 1)
     }
 }
 
