@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-burn = { version = "0.20", features = ["ndarray", "autodiff"] }
+burn = { version = "0.20", features = ["cuda", "autodiff"] }
 
 # "from_scratch" is the hand-rolled version (no dependencies).
 # "with_burn" is the same network using the Burn framework.

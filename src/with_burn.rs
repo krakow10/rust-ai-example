@@ -23,7 +23,7 @@
 // =============================================================================
 
 use burn::prelude::*;                          // Tensor, Backend, Module, Config
-use burn::backend::{Autodiff, NdArray};        // CPU backend + automatic differentiation
+use burn::backend::{Autodiff, Cuda};        // CPU backend + automatic differentiation
 use burn::module::AutodiffModule;              // Provides .valid() for inference mode
 use burn::nn::{Linear, LinearConfig, Sigmoid}; // Layer types
 use burn::nn::loss::{MseLoss, Reduction};      // Loss function
@@ -41,9 +41,9 @@ use burn::optim::{Optimizer, SgdConfig, GradientsParams}; // Optimizer trait + S
 //
 // In Python terms: NdArray ≈ numpy, Autodiff ≈ torch.autograd
 //
-type TrainingBackend = Autodiff<NdArray<f32>>;
+type TrainingBackend = Autodiff<Cuda<f32>>;
 // When we want to run inference without tracking gradients:
-type InferenceBackend = NdArray<f32>;
+type InferenceBackend = Cuda<f32>;
 
 // =============================================================================
 // MODEL DEFINITION
