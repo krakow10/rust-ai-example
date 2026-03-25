@@ -25,7 +25,7 @@
 use burn::prelude::*;                          // Tensor, Backend, Module, Config
 use burn::backend::{Autodiff, Cuda};        // CPU backend + automatic differentiation
 use burn::module::AutodiffModule;              // Provides .valid() for inference mode
-use burn::nn::{Linear, LinearConfig, Relu}; // Layer types
+use burn::nn::{Linear, LinearConfig, Relu, Sigmoid}; // Layer types
 use burn::nn::loss::{MseLoss, Reduction};      // Loss function
 use burn::optim::{Optimizer, SgdConfig, GradientsParams}; // Optimizer trait + SGD config
 
@@ -69,6 +69,7 @@ struct XorNet<B: Backend> {
     linear3: Linear<B>,
     // Sigmoid activation (stateless — no parameters)
     activation: Relu,
+    sigmoid: Sigmoid,
 }
 
 // In Burn, model construction uses the Config pattern.
@@ -95,6 +96,7 @@ impl XorNetConfig {
             linear2: LinearConfig::new(self.hidden_size, self.hidden_size).init(device),
             linear3: LinearConfig::new(self.hidden_size, 1).init(device),
             activation: Relu::new(),
+            sigmoid: Sigmoid::new(),
         }
     }
 }
@@ -125,7 +127,7 @@ impl<B: Backend> XorNet<B> {
         let x = self.linear2.forward(x);    // Affine: [batch, 4] → [batch, 1]
         let x = self.activation.forward(x);
         let x = self.linear3.forward(x);
-        self.activation.forward(x)             // Final σ → outputs in (0, 1)
+        self.sigmoid.forward(x)        // Final σ → outputs in (0, 1)
     }
 }
 
